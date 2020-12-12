@@ -3,85 +3,40 @@ from tkinter import *
 from random import randrange as rnd, choice
 import tkinter as tk
 import math
-from PIL import Image, ImageTk
 #from input_map import read_space_objects_data_from_file as read
 import time
 import socket
 import pickle
 
-
-
-
-class Example(Frame):
-    def __init__(self, parent):
-        Frame.__init__(self, parent)
-
-        self.parent = parent
-
-        self.initUI()
-
-    def initUI(self):
-        global canvas
-
-        self.parent.title("High Tatras")
-        self.pack(fill=BOTH, expand=1)
-
-        self.img = Image.open("Background.jpg")
-        self.tatras = ImageTk.PhotoImage(self.img)
-
-        canvas = Canvas(self, width=self.img.size[0] + 20,
-                        height=self.img.size[1] + 20)
-        canvas.create_image(10, 10, anchor=NW, image=self.tatras)
-        canvas.pack(fill=BOTH, expand=1)
-
-root = tk.Tk()
-fr = tk.Frame(root)
-root.geometry('1920x1080')
-ex = Example(root)
-lines = []
-planets = []
-counter = 0
-aggressiveness = 0
-
 def casual_game():
     first = Toplevel()
     first.geometry('400x400')
     first['bg'] = 'grey'
-    header = Label(first, text="Выберите курс", padx=15, pady=10)
+    header = Label(first,text="Выберите курс", padx=15, pady=10)
     header.grid(row=0, column=0, sticky=W)
-
+ 
     lang = IntVar()
-
-    python_checkbutton = Radiobutton(first, text="Python", value=1, variable=lang, padx=15, pady=10)
+ 
+    python_checkbutton = Radiobutton(first,text="Python", value=1, variable=lang, padx=15, pady=10)
     python_checkbutton.grid(row=1, column=0, sticky=W)
-
-    javascript_checkbutton = Radiobutton(first, text="JavaScript", value=2, variable=lang, padx=15, pady=10)
+ 
+    javascript_checkbutton = Radiobutton(first,text="JavaScript", value=2, variable=lang, padx=15, pady=10)
     javascript_checkbutton.grid(row=2, column=0, sticky=W)
 
-    btn_game = Button(first, text="ОК", background="grey", foreground="white", activebackground="red",
-                      activeforeground="green",
-                      padx="20", pady="8", font="16", command=lets_play)
+    btn_game = Button(first, text="ОК", background="grey", foreground="white", activebackground="red", activeforeground="green",
+            padx="20", pady="8", font="16", command=lets_play)
     btn_game.place(relx=.5, rely=.2, anchor="c", height=60, width=130, bordermode=OUTSIDE)
-    main('7')
+
 
 
 def first_game():
-    first = Toplevel()
-    first.geometry('400x400')
-    first['bg'] = 'grey'
-    Label(first, text="Правила игры\\"
-                      "").pack(expand=1)
-    btn_game = Button(first, text="ОК", background="grey", foreground="white", activebackground="red",
-                      activeforeground="green",
-                      padx="20", pady="8", font="16", command=lets_play)
-    btn_game.place(relx=.5, rely=.2, anchor="c", height=60, width=130, bordermode=OUTSIDE)
-    main('How_to_play')
-
-
-def _from_rgb(rgb):
-    return "#%02x%02x%02x" % rgb
-
-
+        first = Toplevel()
+        first.geometry('400x400')
+        first['bg'] = 'grey'
+        Label(first, text="Правила игры...").pack(expand=1)
+        btn_game = Button(first, text="ОК", background="grey", foreground="white", activebackground="red", activeforeground="green",
+            padx="20", pady="8", font="16", command=lets_play)
+        btn_game.place(relx=.5, rely=.2, anchor="c", height=60, width=130, bordermode=OUTSIDE)
 def lets_play():
     root = Tk()
     root.title("Война миров")
@@ -119,6 +74,23 @@ def lets_play():
     animate(0)  # Start animation'''
 
 
+root = tk.Tk()
+fr = tk.Frame(root)
+root.geometry('1920x1080')
+canvas = tk.Canvas(root, bg='black')
+canvas.focus_set()
+canvas.pack(fill=tk.BOTH, expand=1)
+lines = []
+planets = []
+counter = 0
+aggressiveness = 0
+
+
+
+def _from_rgb(rgb):
+    return "#%02x%02x%02x" % rgb
+
+
 class Planet:
     """Класс планет. Отрисовывает планеты, настраивает взаимодействие между ними.
     Также планеты можно улучшать.
@@ -141,7 +113,6 @@ class Planet:
         self.level = lvl
         self.owner = owner
         self.r = lvl * 7 + 10
-        self.busyness = 0
         self.highlighting = 0
         self.font = "Times " + str(int(12 * math.sqrt(self.level)))
         self.growing = 0
@@ -176,7 +147,6 @@ class Planet:
 
     def second_click(self, other):
         if self != other:
-            self.busyness = 1
             start = self.owner
             end = other.owner
             mass = self.mass
@@ -245,7 +215,6 @@ class Planet:
             outline='grey'
         )
         self.text = canvas.create_text(self.x, self.y, text=int(self.mass), fill='white', font=self.font)
-
 
 
 class Line:
@@ -394,7 +363,6 @@ class Line:
         self.r = ((self.x1 - self.x2) ** 2 + (self.y1 - self.y2) ** 2) ** 0.5
         self.redraw()
 
-
 def click(event):
     """
     Эта функция реагирует на нажатие ллевой кнопкой мыши игроком, позволяет
@@ -411,7 +379,7 @@ def click(event):
 
     if sec_click == 1:
         for j in planets:
-            if ((event.x - j.x) ** 2 + (event.y - j.y) ** 2) <= j.r ** 2:
+            if ((event.x - j.x) ** 2 + (event.y - j.y) ** 2) <= (j.r) ** 2:
                 for k in lines:
                     if k.planet1 == i:
                         k.stop()
@@ -477,6 +445,17 @@ def parse_planet_parameters(line):
     return Planet(parameter_1, parameter_2, parameter_3, parameter_4, parameter_5)
 
 
+class App():
+    def __init__(self):
+        self.root = Tkinter.Tk()
+        button = Tkinter.Button(self.root, text = 'root quit', command=self.quit)
+        button.pack()
+        self.root.mainloop()
+
+    def quit(self):
+        self.root.destroy()
+
+
 def II(me):
     '''Эта функция отвечает за поведение вражеских планет'''
     global planets, aggressiveness
@@ -488,6 +467,7 @@ def II(me):
     enemy_planets = []
     neutral_planets = []
     my_planets_at = []
+    player_planets = []
     allow = 1
     target = 0
     stopper = 0
@@ -604,9 +584,16 @@ def II(me):
             neutral_target = 0
 
 
+def fin():
+    time.sleep(3)
+    root.destroy()
+
+
 def update():
     """Эта функия отвечает за обновление экрана"""
-    global counter
+    global counter, flag_lose, flag_win
+    player_planets = 0
+    II_planets = 0
     if counter >= 200:
         counter = 0
         for i in range(2):
@@ -617,18 +604,26 @@ def update():
     for j in planets:
         j.grow()
         j.massupdate()
+        if j.owner == 1:
+            player_planets += 1
+        if j.owner == 2 or j.owner == 3:
+            II_planets += 1
+    if player_planets == 0:
+        canvas.create_text(1000, 500, text='YOU LOSE', fill='white', font="Times 60")
+        root.after(10, fin)
+    if II_planets == 0:
+        canvas.create_text(1000, 500, text='YOU WIN', fill='white', font="Times 60")
+        root.after(10, fin)
     counter += 1
-    root.after(10, update)
+    root.after(1, update)
 
 
-def main(s0):
+def main():
     global planets
-    s = 'C:\Python\War_Of__Worlds\Maps/' + s0 + '.txt'
-    planets = read_space_objects_data_from_file(s)
+    planets = read_space_objects_data_from_file(r"C:\Users\acer\War_Of__Worlds\Maps\7.txt")
     canvas.bind('<Button-1>', click)
     update()
 
-
-main('7')
+main()
 
 root.mainloop()
